@@ -14,10 +14,8 @@ Test the [WCAG (Web Content Accessibility Guidelines)](https://www.w3.org/TR/WCA
 
 5. Image tags should have "width" and "height" attributes: [description](https://rules.sonarsource.com/html/tag/user-experience/RSPEC-1099)
 
-6. "<table>" tags should have a description: [description](https://rules.sonarsource.com/html/tag/wcag2-a/RSPEC-1085)
+6. "\<table>" tags should have a description: [description](https://rules.sonarsource.com/html/tag/wcag2-a/RSPEC-1085)
 
 7. "input", "select" and "textarea" tags should be labeled: [description](https://rules.sonarsource.com/html/tag/wcag2-a/RSPEC-1097)
 
 8. Links with identical texts should have identical targets: [description](https://rules.sonarsource.com/html/type/Code%20Smell/RSPEC-1101)
-
-
