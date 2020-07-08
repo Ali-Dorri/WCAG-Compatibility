@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 
 class CompatibilityTester:
@@ -18,7 +19,9 @@ class CompatibilityTester:
 
     def test_html_language(self):
         """Returns true if html has language attribute, false otherwise"""
-        pass
+        html_tag = self.browser.find_element(By.TAG_NAME, 'html')
+        lang_attribute = html_tag.get_attribute('lang')
+        return bool(lang_attribute)
 
     def test_page_title(self):
         """Returns true if all pages have head and title attributes, false otherwise"""

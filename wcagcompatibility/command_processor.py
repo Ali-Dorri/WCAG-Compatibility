@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.common.exceptions import InvalidArgumentException
+from selenium.common.exceptions import InvalidArgumentException, WebDriverException
 
 from wcagcompatibility.compatibility_tester import CompatibilityTester
 
@@ -17,7 +17,6 @@ class CommandProcessor:
         if command_args.__len__() == 0:
             return None
 
-        print(command_args)
         if command_args[0] == 'create_driver' or command_args[0] == 'create_webdriver':
             if command_args.__len__() > 1:
                 self.create_webdriver(command_args[1])
@@ -87,6 +86,8 @@ class CommandProcessor:
                 print('url was opened')
             except InvalidArgumentException:
                 print('url is invalid')
+            except WebDriverException:
+                print('web driver exception occurred')
         else:
             print(self.BROWSER_NOT_CREATED_ERROR)
 
@@ -113,7 +114,7 @@ class CommandProcessor:
     def test_html_language(self):
         """Print if test_html_language is verified or not"""
         if self.compatibility_tester is not None:
-            self.test_rule('html language', self.compatibility_tester.test_table_header)
+            self.test_rule('html language', self.compatibility_tester.test_html_language)
         else:
             print(self.BROWSER_NOT_CREATED_ERROR)
 
