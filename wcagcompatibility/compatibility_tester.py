@@ -1,5 +1,6 @@
 from selenium import webdriver
 from wcagcompatibility.table_header_checker import TableHeaderChecker
+from wcagcompatibility.utility import Utility
 
 
 class CompatibilityTester:
@@ -46,7 +47,27 @@ class CompatibilityTester:
     def test_image_rect(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all images has width and height attribute, false otherwise"""
-        pass
+        images = self.browser.find_elements_by_tag_name('img')
+        if images:
+            for image in images:
+                width = image.get_attribute('width')
+                height = image.get_attribute('height')
+                if not width and height:
+                    message = Utility.get_message(image)
+                    message = Utility.add_message(message, 'there is no width and height attributes')
+                    return False, message
+                elif not width:
+                    message = Utility.get_message(image)
+                    message = Utility.add_message(message, 'there is no width attribute')
+                    return False, message
+                elif not height:
+                    message = Utility.get_message(image)
+                    message = Utility.add_message(message, 'there is no height attribute')
+                    return False, message
+                else:
+                    return True, None
+        else:
+            return True, None
 
     def test_table_description(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
