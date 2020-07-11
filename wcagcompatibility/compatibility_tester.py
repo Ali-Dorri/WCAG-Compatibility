@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from wcagcompatibility.table_header_checker import TableHeaderChecker
 
 
 class CompatibilityTester:
@@ -14,36 +14,48 @@ class CompatibilityTester:
         self.browser.get(url)
 
     def test_table_header(self):
-        """Return true if all tables has header, false otherwise"""
-        pass
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all tables has header, false otherwise"""
+        return TableHeaderChecker(self.browser).check_rule()
 
     def test_html_language(self):
-        """Returns true if html has language attribute, false otherwise"""
-        html_tag = self.browser.find_element(By.TAG_NAME, 'html')
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if html has language attribute, false otherwise"""
+        html_tag = self.browser.find_element_by_tag_name('html')
         lang_attribute = html_tag.get_attribute('lang')
-        return bool(lang_attribute)
+        return bool(lang_attribute), None
 
     def test_page_title(self):
-        """Returns true if all pages have head and title attributes, false otherwise"""
-        print('called test_page_title')
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all pages have head and title attributes, false otherwise"""
         pass
 
     def test_html_deprecated(self):
-        """Returns true if no deprecated html 5 attributes is used, false otherwise"""
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if no deprecated html 5 attributes is used, false otherwise"""
         pass
 
     def test_image_rect(self):
-        """Returns true if all images has width and height attribute, false otherwise"""
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all images has width and height attribute, false otherwise"""
         pass
 
     def test_table_description(self):
-        """Returns true if all tables have description, false otherwise"""
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all tables have description, false otherwise"""
         pass
 
     def test_labeled_input_select_textarea(self):
-        """Returns true if all input, select and textarea elements have label, false otherwise"""
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all input, select and textarea elements have label, false otherwise"""
         pass
 
     def test_identical_link_targets(self):
-        """Returns true if all links with identical text have identical targets, false otherwise"""
+        """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
+         Compliant status is true if all links with identical text have identical targets, false otherwise"""
         pass
+
+
+
+
+

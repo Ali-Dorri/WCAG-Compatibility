@@ -162,12 +162,20 @@ class CommandProcessor:
 
     @staticmethod
     def test_rule(rule_name, rule_test):
-        print('testing ' + rule_name + '...')
-        compliant = rule_test()
-        if compliant:
-            print(rule_name + ' rule is compliant')
-        else:
-            print(rule_name + ' rule is non compliant')
+        print('=====testing ' + rule_name + '...')
+        try:
+            compliant_messages = rule_test()
+            compliant = compliant_messages[0]
+            messages = compliant_messages[1]
+            if compliant:
+                print(rule_name + ' rule is compliant')
+            else:
+                print(rule_name + ' rule is non compliant')
+                if messages:
+                    for message in messages:
+                        print(message)
+        except Exception:
+            print('some exception was occred for rule ' + rule_name)
 
 
 if __name__ == "__main__":
