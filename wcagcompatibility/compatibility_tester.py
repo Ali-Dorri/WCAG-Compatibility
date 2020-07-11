@@ -28,7 +28,15 @@ class CompatibilityTester:
     def test_page_title(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all pages have head and title attributes, false otherwise"""
-        pass
+        head = self.browser.find_element_by_xpath('./html/head')
+        if head:
+            title = head.find_element_by_xpath('./title')
+            if title:
+                return True, None
+            else:
+                return False, 'head tag has no title tag'
+        else:
+            return False, 'page has no head tag'
 
     def test_html_deprecated(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.

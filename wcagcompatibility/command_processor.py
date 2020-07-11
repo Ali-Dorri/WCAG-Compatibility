@@ -174,8 +174,9 @@ class CommandProcessor:
                 if messages:
                     for message in messages:
                         print(message)
-        except Exception:
-            print('some exception was occred for rule ' + rule_name)
+        except Exception as exception:
+            print('some exception was occured for rule ' + rule_name + ', exception:')
+            print(exception)
 
 
 if __name__ == "__main__":
