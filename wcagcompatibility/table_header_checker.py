@@ -19,7 +19,8 @@ class TableHeaderChecker(RuleChecker):
             for table in tables:
                 compliant_message = self.check_table_header(table)
                 compliant = compliant & compliant_message[0]
-                messages.append(compliant_message[1])
+                if not compliant:
+                    messages.append(compliant_message[1])
             return compliant, messages
         else:
             return True, None
@@ -27,11 +28,11 @@ class TableHeaderChecker(RuleChecker):
     def check_table_header(self, table):
         role = table.get_attribute('role')
         if role is not None and (role == 'presentation' or role == 'none'):
-            return True
+            return True, None
         else:
             aria_hidden = table.get_attribute('aria-hidden')
             if aria_hidden:
-                return True
+                return True, None
 
         #none of tables's role or aria-hidden attributes are compliant
         compliant_messages = self.check_both_scope_headers_ids(table)

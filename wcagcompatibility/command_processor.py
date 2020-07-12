@@ -171,9 +171,9 @@ class CommandProcessor:
                 print(rule_name + ' rule is compliant')
             else:
                 print(rule_name + ' rule is non compliant')
-                if messages:
-                    for message in messages:
-                        print(message)
+            if messages:
+                for message in messages:
+                    print(message)
         except Exception as exception:
             print('some exception was occured for rule ' + rule_name + ', exception:')
             print(exception)

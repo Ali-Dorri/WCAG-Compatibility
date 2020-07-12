@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
 from wcagcompatibility.table_header_checker import TableHeaderChecker
 from wcagcompatibility.utility import Utility
 
@@ -72,7 +74,18 @@ class CompatibilityTester:
     def test_table_description(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all tables have description, false otherwise"""
-        pass
+        tables = self.browser.find_elements_by_tag_name('table')
+        if tables:
+            compliant = True
+            messages = []
+            for table in tables:
+                compliant_message = self.check_table_description(table)
+                compliant = compliant & compliant_message[0]
+                if not compliant:
+                    messages.append(compliant_message[1])
+            return compliant, messages
+        else:
+            return True, ['page has no table']
 
     def test_labeled_input_select_textarea(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -83,6 +96,42 @@ class CompatibilityTester:
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all links with identical text have identical targets, false otherwise"""
         pass
+
+    def check_table_description(self, table):
+        role = table.get_attribute('role')
+        if role is not None and (role == 'presentation' or role == 'none'):
+            return True, 'table role attribute is ' + role
+        else:
+            aria_hidden = table.get_attribute('aria-hidden')
+            if aria_hidden:
+                return True, 'table aria-hidden attribute is true'
+
+        try:
+            caption = table.find_element_by_tag_name('caption')
+            if caption and caption.text:
+                return True, 'table has caption'
+
+            describe_id = table.get_attribute('aria-describedby')
+            if describe_id:
+                describer = self.browser.find_element_by_id(describe_id)
+                if describer and describer.text:
+                    return True, 'table has aria-describedby reference to ' + describe_id
+
+            summary = table.get_attribute('summary')
+            if summary:
+                return True, 'table has summary attribute'
+
+            figure = table.find_element_by_xpath('..')
+            if figure:
+                figure_caption = figure.find_element_by_tag_name('figurecaption')
+                if figure_caption and figure_caption.text:
+                    return True, 'table is in figure tag which has figurecaption tag in it'
+        except NoSuchElementException:
+            pass
+
+        message = Utility.get_message(table)
+        message = Utility.address_message(message, 'table has no description')
+        return False, message
 
 
 
