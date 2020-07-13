@@ -10,7 +10,7 @@ class Utility:
         element_id = web_element.get_attribute('id')
         value = web_element.get_property('value')
         class_attribute = web_element.get_attribute('class')
-        text = web_element.text
+        text = web_element.get_attribute('textContent')
         message = 'in {0} with {1}=={2}'
         if element_id:
             return message.format(tag_name, 'id', element_id)

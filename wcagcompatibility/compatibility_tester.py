@@ -99,7 +99,40 @@ class CompatibilityTester:
     def test_identical_link_targets(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all links with identical text have identical targets, false otherwise"""
-        pass
+        a_tags = self.browser.find_elements_by_tag_name('a')
+        if a_tags:
+            messages = []
+            compliant = True
+            index_outer = 0
+            searched_links_count = 0;
+            while index_outer < len(a_tags) and index_outer < 100:
+                a_left = a_tags[index_outer]
+                index_inner = index_outer + 1
+                while index_inner < len(a_tags) and index_inner < 100:
+                    a_right = a_tags[index_inner]
+                    text_left = a_left.get_attribute('textContent')
+                    text_right = a_right.get_attribute('textContent')
+                    if a_left != a_right and text_left and text_right and text_left == text_right:
+                        url_left = a_left.get_attribute('href')
+                        url_right = a_right.get_attribute('href')
+                        is_equal_links = self.is_links_equal(url_left, url_right)
+                        if not is_equal_links:
+                            message = 'link with text=={0}, target=={1}'
+                            message_left = message.format(text_left, url_left)
+                            message_right = message.format(text_right, url_right)
+                            message = Utility.add_message(message_left, message_right)
+                            messages.append(message)
+                            compliant = compliant and False
+                        else:
+                            compliant = compliant and True
+                    index_inner += 1
+                    searched_links_count += 1
+                index_outer += 1
+            message = 'searched {0} links, at most 10000. I need my CPU!'.format(searched_links_count)
+            messages.append(message)
+            return compliant, messages
+        else:
+            return True, 'there is no link'
 
     def check_table_description(self, table):
         message = Utility.get_message(table)
@@ -142,6 +175,9 @@ class CompatibilityTester:
 
         message = Utility.address_message(message, 'table has no description')
         return False, message
+
+    def is_links_equal(self, url_left, url_right):
+        return url_left == url_right
 
 
 
