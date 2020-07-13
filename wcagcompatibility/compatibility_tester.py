@@ -21,7 +21,29 @@ class CompatibilityTester:
     def test_table_header(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all tables has header, false otherwise"""
-        return TableHeaderChecker(self.browser).check_rule()
+        tables = self.browser.find_elements_by_tag_name("table")
+        errflag = 0
+        for table in tables:
+            role = table.get_attribute("role")
+            if role == "none" or role == "presentation":
+                continue
+
+            trs = table.find_elements_by_tag_name("tr")
+            ths = trs[0].find_elements_by_tag_name("th")
+            for th in ths:
+                if len(str(th.get_attribute("scope"))) > 0:
+                    continue
+                else:
+                    errflag = 1
+                    break
+
+            if errflag > 0:
+                break
+
+        if errflag > 0:
+            return False, None
+        else:
+            return True, None
 
     def test_html_language(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -96,7 +118,21 @@ class CompatibilityTester:
     def test_labeled_input_select_textarea(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if all input, select and textarea elements have label, false otherwise"""
-        pass
+        compliant = True
+        messages = []
+        compliant_message = self.check_labled_element('input')
+        compliant = compliant and compliant_message[0]
+        if not compliant_message[0]:
+            messages.append(compliant_message[1])
+        compliant_message = self.check_labled_element('select')
+        compliant = compliant and compliant_message[0]
+        if not compliant_message[0]:
+            messages.append(compliant_message[1])
+        compliant_message = self.check_labled_element('textarea')
+        compliant = compliant and compliant_message[0]
+        if not compliant_message[0]:
+            messages.append(compliant_message[1])
+        return compliant, messages
 
     def test_identical_link_targets(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -181,6 +217,23 @@ class CompatibilityTester:
     def is_links_equal(self, url_left, url_right):
         return url_left == url_right
 
+    def check_labled_element(self, element_name):
+        fields = self.browser.find_elements_by_tag_name(element_name)
+        errflag = 0
+        for field in fields:
+            par = field.find_element_by_xpath("parent::*")
+            siblings = par.find_elements_by_xpath("child::*")
+            idx = siblings.index(field)
+            idx -= 1
+            if idx >= 0 and siblings[idx].tag_name == "label":
+                continue
+            else:
+                errflag += 1
+
+        if errflag > 0:
+            return False, "err: # of fields with no label: " + str(errflag) + " out of " + str(len(fields))
+        else:
+            return True, None
 
 
 
