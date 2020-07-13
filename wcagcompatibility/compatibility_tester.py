@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+from wcagcompatibility.html_deprecated_checker import HtmlDeprecatedChecker
 from wcagcompatibility.table_header_checker import TableHeaderChecker
 from wcagcompatibility.utility import Utility
 
@@ -8,6 +9,7 @@ from wcagcompatibility.utility import Utility
 class CompatibilityTester:
 
     def __init__(self, browser):
+        self.html_deprecated_checker = HtmlDeprecatedChecker()
         if browser is not None:
             self.browser = browser
         else:
@@ -44,7 +46,7 @@ class CompatibilityTester:
     def test_html_deprecated(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
          Compliant status is true if no deprecated html 5 attributes is used, false otherwise"""
-        pass
+        return self.html_deprecated_checker.check_rule(self.browser)
 
     def test_image_rect(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -110,8 +112,8 @@ class CompatibilityTester:
                 index_inner = index_outer + 1
                 while index_inner < len(a_tags) and index_inner < 100:
                     a_right = a_tags[index_inner]
-                    text_left = a_left.get_attribute('textContent')
-                    text_right = a_right.get_attribute('textContent')
+                    text_left = a_left.text
+                    text_right = a_right.text
                     if a_left != a_right and text_left and text_right and text_left == text_right:
                         url_left = a_left.get_attribute('href')
                         url_right = a_right.get_attribute('href')
