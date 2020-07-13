@@ -37,9 +37,9 @@ class CompatibilityTester:
             if title:
                 return True, None
             else:
-                return False, 'head tag has no title tag'
+                return False, ['head tag has no title tag']
         else:
-            return False, 'page has no head tag'
+            return False, ['page has no head tag']
 
     def test_html_deprecated(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -51,25 +51,29 @@ class CompatibilityTester:
          Compliant status is true if all images has width and height attribute, false otherwise"""
         images = self.browser.find_elements_by_tag_name('img')
         if images:
+            compliant = True
+            messages = []
             for image in images:
                 width = image.get_attribute('width')
                 height = image.get_attribute('height')
-                if not width and height:
-                    message = Utility.get_message(image)
+                message = Utility.get_message(image)
+                if not width and not height:
                     message = Utility.add_message(message, 'there is no width and height attributes')
-                    return False, message
+                    messages.append(message)
+                    compliant = compliant and False
                 elif not width:
-                    message = Utility.get_message(image)
                     message = Utility.add_message(message, 'there is no width attribute')
-                    return False, message
+                    messages.append(message)
+                    compliant = compliant and False
                 elif not height:
-                    message = Utility.get_message(image)
                     message = Utility.add_message(message, 'there is no height attribute')
-                    return False, message
+                    messages.append(message)
+                    compliant = compliant and False
                 else:
-                    return True, None
+                    compliant = compliant and True
+            return compliant, messages
         else:
-            return True, None
+            return True, ['page has no image']
 
     def test_table_description(self):
         """Returns a tuple consists of compliant status (boolean) and tuple/array of messages (string) for non compliant status.
@@ -98,38 +102,44 @@ class CompatibilityTester:
         pass
 
     def check_table_description(self, table):
+        message = Utility.get_message(table)
         role = table.get_attribute('role')
         if role is not None and (role == 'presentation' or role == 'none'):
-            return True, 'table role attribute is ' + role
+            message = Utility.address_message(message, 'table role attribute is ' + role)
+            return True, message
         else:
             aria_hidden = table.get_attribute('aria-hidden')
             if aria_hidden:
-                return True, 'table aria-hidden attribute is true'
+                message = Utility.address_message(message, 'table aria-hidden attribute is true')
+                return True, message
 
         try:
             caption = table.find_element_by_tag_name('caption')
             if caption and caption.text:
-                return True, 'table has caption'
+                message = Utility.address_message(message, 'table has caption')
+                return True, message
 
             describe_id = table.get_attribute('aria-describedby')
             if describe_id:
                 describer = self.browser.find_element_by_id(describe_id)
                 if describer and describer.text:
-                    return True, 'table has aria-describedby reference to ' + describe_id
+                    message = Utility.address_message(message, 'table has aria-describedby reference to ' + describe_id)
+                    return True, message
 
             summary = table.get_attribute('summary')
             if summary:
-                return True, 'table has summary attribute'
+                message = Utility.address_message(message, 'table has summary attribute')
+                return True, message
 
             figure = table.find_element_by_xpath('..')
             if figure:
                 figure_caption = figure.find_element_by_tag_name('figurecaption')
                 if figure_caption and figure_caption.text:
-                    return True, 'table is in figure tag which has figurecaption tag in it'
+                    message = Utility.address_message(message, 'table is in figure tag which has figurecaption tag in it')
+                    return True, message
         except NoSuchElementException:
             pass
 
-        message = Utility.get_message(table)
         message = Utility.address_message(message, 'table has no description')
         return False, message
 
